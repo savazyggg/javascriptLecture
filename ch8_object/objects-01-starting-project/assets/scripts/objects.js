@@ -13,15 +13,17 @@ const renderMovies = (filter = "") => {
   }
   movieList.innerHTML = "";
 
-  const filteredMoive = !filter
+  const filteredMovie = !filter
     ? movies
     : movies.filter((movie) => movie.info.title.includes(filter));
-  filteredMoive.forEach((movie) => {
+  filteredMovie.forEach((movie) => {
     const movieEl = document.createElement("li");
+
     const { info, ...otherProps } = movie;
     console.log(otherProps);
-    const { title: movieTitle } = info;
-    let text = movieTitle + " - ";
+    //const { title: movieTitle } = info;
+    //const {getFormattedTitle} = movie;
+    let text = movie.getFormattedTitle() + " - ";
     for (const key in info) {
       if (key !== "title") {
         text = text + `${key}: ${info[key]}`; //다이나믹 프로포티 엑세스 로직
@@ -45,6 +47,9 @@ const addMovieHandler = () => {
       [extraName]: extraValue,
     },
     id: Math.random().toString(),
+    getFormattedTitle: function () {
+      return this.info.title.toUpperCase(); //this가 없다면 함수를 실행시키게된 항목인 newMovie안을 참조하지 않고 그 외 밖을 참조하게 되고 이상하게 동작할 수 있다.
+    },
   };
   movies.push(newMovie);
   console.log(newMovie);
