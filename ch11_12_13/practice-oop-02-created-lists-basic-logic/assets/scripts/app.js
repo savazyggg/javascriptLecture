@@ -11,11 +11,24 @@ class DOMHelper {
   }
 }
 class Component {
+  constructor(hostElementId, insertBefore = false) {
+    if (hostElementId) {
+      this.hostElementId = document.getElementById(hostElementId);
+    } else {
+      this.hostElementId = document.body;
+    }
+    this.insertBefore = insertBefore;
+  }
   detach() {
-    this.element.remove();
+    if (this.element) {
+      this.element.remove();
+    }
   }
   show() {
-    document.body.append(this.element);
+    this.hostElementId.insertAdjacentElement(
+      this.insertBefore ? "afterbegin" : "beforeend"
+    );
+    this.element;
   }
 }
 
