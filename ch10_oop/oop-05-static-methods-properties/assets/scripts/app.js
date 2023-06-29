@@ -11,9 +11,37 @@ class Product {
     this.price = price;
   }
 }
+class ElementAttribute {
+  constructor(attrName, attrValue) {
+    this.name = attrName;
+    this.value = attrValue;
+  }
+}
+class Component {
+  constructor(renderHookId) {
+    this.hook = renderHookId;
+  }
+  creatRootElement(tag, cssClasses, attributes) {
+    const rootElement = document.createElement(tag);
+    if (cssClasses) {
+      rootElement.className = cssClasses;
+    }
+    if (attributes && attributes.length > 0) {
+      for (const attr of attributes) {
+        rootElement.setAttribute(attr.name, attr.value);
+      }
+    }
+    document.getElementById(this.hookId).append(rootElement);
+    return rootElement;
+  }
+}
 
-class ShoppingCart {
+class ShoppingCart extends Component {
   items = [];
+
+  constructor(renderHookId) {
+    super(renderHookId);
+  }
 
   set cartItems(value) {
     this.items = value;
@@ -34,19 +62,19 @@ class ShoppingCart {
   }
 
   render() {
-    const cartEl = document.createElement("section");
+    const cartEl = this.creatRootElement("section", "cart");
     cartEl.innerHTML = `
       <h2>Total: \$${0}</h2>
       <button>Order Now!</button>
     `;
     cartEl.className = "cart";
     this.totalOutput = cartEl.querySelector("h2");
-    return cartEl;
   }
 }
 
-class ProductItem {
-  constructor(product) {
+class ProductItem extends Component {
+  constructor(product, renderHookId) {
+    super(renderHookId);
     this.product = product;
   }
 
@@ -55,8 +83,8 @@ class ProductItem {
   }
 
   render() {
-    const prodEl = document.createElement("li");
-    prodEl.className = "product-item";
+    const prodEl = this.creatRootElement("li", "product-item");
+
     prodEl.innerHTML = `
         <div>
           <img src="${this.product.imageUrl}" alt="${this.product.title}" >
@@ -70,7 +98,6 @@ class ProductItem {
       `;
     const addCartButton = prodEl.querySelector("button");
     addCartButton.addEventListener("click", this.addToCart.bind(this));
-    return prodEl;
   }
 }
 
@@ -94,11 +121,11 @@ class ProductList {
 
   render() {
     const prodList = document.createElement("ul");
+    prodList.id = "prod-list";
     prodList.className = "product-list";
     for (const prod of this.products) {
-      const productItem = new ProductItem(prod);
-      const prodEl = productItem.render();
-      prodList.append(prodEl);
+      const productItem = new ProductItem(prod, "prod-list");
+      productItem.render();
     }
     return prodList;
   }
@@ -108,8 +135,8 @@ class Shop {
   render() {
     const renderHook = document.getElementById("app");
 
-    this.cart = new ShoppingCart();
-    const cartEl = this.cart.render();
+    new ShoppingCart("app");
+    this.cart.render();
     const productList = new ProductList();
     const prodListEl = productList.render();
 

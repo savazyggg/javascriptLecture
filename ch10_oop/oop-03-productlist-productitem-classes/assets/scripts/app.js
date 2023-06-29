@@ -36,8 +36,9 @@ class ProductItem {
     this.product = product;
   }
 
-  addToCart(product) {
+  addToCart() {
     //console.log(this.product); //이벤트 소스에(버튼) this 바인딩 -> 이벤트에 this바인드 해주어야, 이벤트가 실행될때 참고된 this객체 참조
+    ShoppingCart.addProduct();
   }
 
   render() {
